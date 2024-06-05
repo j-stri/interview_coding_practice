@@ -79,7 +79,9 @@ func main() {
 	// 6 FIN 0 0 1
 	// I hope that's clear?
 
-	//for parsing the standard input it's AI written code
+	//
+	// NOTE: for parsing the standard input, I used AI written code just because I haven't done it in Go before
+	//
 
 	// Create a new scanner to read from standard input
 	scanner := bufio.NewScanner(os.Stdin)
@@ -102,7 +104,7 @@ func main() {
 		// Process the line here
 		input[i] = line
 
-		fmt.Println("Received line:", line)
+		//fmt.Println("Received line:", line)
 	}
 
 	// Check for any errors that occurred during scanning
@@ -148,7 +150,7 @@ func printEuroRank(input []string) {
 
 	countries := maps.Values(outmap)
 
-	//alternative method without maps import:
+	//alternative method without maps library import:
 	//v := make([]string, 0, len(m))
 	// for  _, value := range m {
 	// 	v = append(v, value)
@@ -157,18 +159,13 @@ func printEuroRank(input []string) {
 	//ref: https://stackoverflow.com/questions/13422578/in-go-how-to-get-a-slice-of-values-from-a-map
 
 	sort.SliceStable(countries, func(i, j int) bool {
-		return countries[i].countrycode < countries[j].countrycode
-	})
-
-	sort.SliceStable(countries, func(i, j int) bool {
-
 		return countries[i].gold > countries[j].gold ||
 			(countries[i].gold == countries[j].gold && countries[i].silver > countries[j].silver) ||
 			(countries[i].gold == countries[j].gold && countries[i].silver == countries[j].silver &&
-				countries[i].bronze > countries[j].bronze)
+				countries[i].bronze > countries[j].bronze) ||
+			(countries[i].gold == countries[j].gold && countries[i].silver == countries[j].silver &&
+				countries[i].bronze == countries[j].bronze && countries[i].countrycode < countries[j].countrycode)
 	})
-
-	//fmt.Println(countries)
 
 	rank := 1
 	tie := 0
