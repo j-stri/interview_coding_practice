@@ -7,6 +7,8 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"golang.org/x/exp/maps"
 )
 
 func main() {
@@ -122,26 +124,37 @@ type Country struct {
 func printEuroRank(input []string) {
 	//n := len(input)
 
-	outmap := make(map[string][]int)
+	outmap := make(map[string]*Country)
 
 	for _, line := range input {
 		for medal_kind, country := range strings.Split(line, " ") {
 			_, ok := outmap[country]
 			if !ok && country != "" {
-				outmap[country] = []int{0, 0, 0}
+				outmap[country] = &Country{countrycode: country, gold: 0, silver: 0, bronze: 0}
 			}
-			outmap[country][medal_kind] += 1
+			switch medal_kind {
+			case 0:
+				outmap[country].gold += 1
+			case 1:
+				outmap[country].silver += 1
+			case 2:
+				outmap[country].bronze += 1
+
+			}
 
 		}
 
 	}
 
-	countries := make([]Country, 0)
+	countries := maps.Values(outmap)
 
-	for key := range outmap {
-		countries = append(countries,
-			Country{countrycode: key, gold: outmap[key][0], silver: outmap[key][1], bronze: outmap[key][2]})
-	}
+	//alternative method without maps import:
+	//v := make([]string, 0, len(m))
+	// for  _, value := range m {
+	// 	v = append(v, value)
+	// }
+
+	//ref: https://stackoverflow.com/questions/13422578/in-go-how-to-get-a-slice-of-values-from-a-map
 
 	sort.SliceStable(countries, func(i, j int) bool {
 		return countries[i].countrycode < countries[j].countrycode
